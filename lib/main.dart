@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cardholder/pages/home_page.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:go_router/go_router.dart';
 import 'package:cardholder/pages/scan_page.dart';
 
@@ -17,6 +18,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       routerConfig: _router,
+      builder: EasyLoading.init(),
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
