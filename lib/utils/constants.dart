@@ -13,6 +13,6 @@ static const String website = 'Website';
 
 
 const String hint = 'Long press and drag each item from the below list and drop above in the appropriate box';
-
+const String emptyFieldErrMsg = 'This filed must not be empty';
 
 
