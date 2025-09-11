@@ -1,3 +1,4 @@
+import 'package:cardholder/models/contact_model.dart';
 import 'package:cardholder/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -6,6 +7,8 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:cardholder/customwidgets/drag_target_item.dart';
 import 'package:cardholder/customwidgets/line_item.dart';
+import 'package:cardholder/pages/form_page.dart';
+import 'package:go_router/go_router.dart';
 
 class ScanPage extends StatefulWidget {
   static const String routeName = 'scan';
@@ -17,13 +20,30 @@ class ScanPage extends StatefulWidget {
 }
 
 class _ScanPageState extends State<ScanPage> {
+  String name = '',
+      mobile = '',
+      email = '',
+      address = '',
+      company = '',
+      designation = '',
+      website = '',
+      image = '';
+
   bool isScanOver = false;
   List<String> lines = [];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Scan')),
+      appBar: AppBar(
+        title: const Text('Scan'),
+        actions: [
+          IconButton(
+            onPressed: image.isEmpty ? null : createContact,
+            icon: const Icon(Icons.arrow_forward),
+          )
+        ],
+        ),
       body: ListView(
         children: [
           Row(
@@ -86,9 +106,9 @@ class _ScanPageState extends State<ScanPage> {
               ),
             ),
 
-
-            if (isScanOver) const Padding(
-              padding: const EdgeInsets.all(8.0),
+          if (isScanOver)
+            const Padding(
+              padding: EdgeInsets.all(8.0),
               child: Text(hint),
             ),
 
@@ -101,6 +121,11 @@ class _ScanPageState extends State<ScanPage> {
   void getImage(ImageSource camera) async {
     final xfile = await ImagePicker().pickImage(source: camera);
     if (xfile != null) {
+      setState(() {
+         image = xfile.path;
+      });
+     
+
       EasyLoading.show(status: "Please wait");
       final textRecognizer = TextRecognizer(
         script: TextRecognitionScript.latin,
@@ -126,5 +151,44 @@ class _ScanPageState extends State<ScanPage> {
     }
   }
 
-  getPropertyValue(String property, String value) {}
+  getPropertyValue(String property, String value) {
+    switch (property) {
+      case ContactProperties.name:
+        name = value;
+
+      case ContactProperties.mobile:
+        mobile = value;
+
+      case ContactProperties.email:
+        email = value;
+
+      case ContactProperties.address:
+        address = value;
+
+      case ContactProperties.company:
+        company = value;
+
+      case ContactProperties.designation:
+        designation = value;
+
+      case ContactProperties.website:
+        website = value;
+    }
+  }
+
+  void createContact() {
+    final contact = ContactModel(
+      name: name, 
+      mobile: mobile,
+      email: email,
+      address: address,
+      company: company,
+      designation: designation,
+      website: website,
+      image: image
+      );
+
+      context.goNamed(FormPage.routeName, extra: contact);
+
+  }
 }
