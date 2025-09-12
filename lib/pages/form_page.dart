@@ -1,5 +1,9 @@
 import 'package:cardholder/models/contact_model.dart';
 import 'package:cardholder/utils/constants.dart';
+import 'package:cardholder/utils/helpers.dart';
+import 'package:cardholder/providers/contact_provider.dart';
+import 'package:provider/provider.dart';
+
 import 'package:flutter/material.dart';
 
 class FormPage extends StatefulWidget {
@@ -142,5 +146,18 @@ class _FormPageState extends State<FormPage> {
       widget.contactModel.designation = designationController.text;
       widget.contactModel.website = webController.text;
     }
+
+    Provider.of<ContactProvider>(context, listen: false)
+    .insertContact(widget.contactModel)
+    .then((value) {
+      if (value > 0) {
+        showMsg(context, 'Saved');
+      }
+    })
+    .catchError((error) {
+      showMsg(context, 'Failed to save');
+    })
+    ;
+    
   }
 }
