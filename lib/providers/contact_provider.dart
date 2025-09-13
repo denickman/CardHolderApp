@@ -22,7 +22,7 @@ class ContactProvider extends ChangeNotifier {
   Future<void> getAllFavoriteContacts() async {
     contactList = await _db.getAllFavoriteContacts();
     notifyListeners();
-  }
+  } 
 
   Future<void> deleteContact(int id) {
     return _db.deleteContact(id);
@@ -36,4 +36,6 @@ class ContactProvider extends ChangeNotifier {
     final index = contactList.indexOf(contactModel);
     contactList[index].favorite = !contactList[index].favorite;
   }
+
+  Future<ContactModel> getContactById(int id) => _db.getContactById(id);
 }

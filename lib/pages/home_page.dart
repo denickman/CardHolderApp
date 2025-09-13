@@ -2,6 +2,8 @@ import 'package:cardholder/utils/helpers.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:cardholder/pages/scan_page.dart';
+import 'package:cardholder/pages/contact_details_page.dart';
+
 import 'package:provider/provider.dart';
 import 'package:cardholder/providers/contact_provider.dart';
 
@@ -79,6 +81,7 @@ class _HomePageState extends State<HomePage> {
                 showMsg(context, 'Delete');
               },
               child: ListTile(
+                onTap: () => context.goNamed(ContactDetailsPage.routeName, extra: contact.id),
                 leading: Text('id: ${contact.id}'),
                 title: Text(contact.name),
                 trailing: IconButton(
