@@ -1,11 +1,11 @@
+import 'package:cardholder/utils/helpers.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart'; 
+import 'package:go_router/go_router.dart';
 import 'package:cardholder/pages/scan_page.dart';
 import 'package:provider/provider.dart';
 import 'package:cardholder/providers/contact_provider.dart';
 
 class HomePage extends StatefulWidget {
-
   static const String routeName = '/';
   const HomePage({super.key});
 
@@ -14,73 +14,110 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
   int selectedIndex = 0;
 
   @override
   void didChangeDependencies() {
-   Provider.of<ContactProvider>(context, listen: false).getAllContacts();
+    Provider.of<ContactProvider>(context, listen: false).getAllContacts();
     super.didChangeDependencies();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Contact list'),
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-              context.goNamed(ScanPage.routeName);
-        }, 
+      appBar: AppBar(title: const Text('Contact list')),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          context.goNamed(ScanPage.routeName);
+        },
         shape: const CircleBorder(),
         child: const Icon(Icons.add),
-        ),
-        bottomNavigationBar: BottomAppBar(
-          padding: EdgeInsets.zero,
-          shape: const CircularNotchedRectangle(),
-          notchMargin: 10,
-          clipBehavior: Clip.antiAlias,
-          child: BottomNavigationBar(
+      ),
+      bottomNavigationBar: BottomAppBar(
+        padding: EdgeInsets.zero,
+        shape: const CircularNotchedRectangle(),
+        notchMargin: 10,
+        clipBehavior: Clip.antiAlias,
+        child: BottomNavigationBar(
+          backgroundColor: Colors.blue[300],
+          onTap: (index) {
+            setState(() {
+              selectedIndex = index;
+            });
+          },
+          currentIndex: selectedIndex,
+          items: const [
+            BottomNavigationBarItem(icon: Icon(Icons.person), label: 'All'),
 
-            backgroundColor: Colors.blue[300],
-            onTap: (index) {
-              setState(() {
-                selectedIndex = index; 
-              });
-            },
-            currentIndex: selectedIndex,
-            items: const [
-              BottomNavigationBarItem(
-                icon: Icon(Icons.person),
-              label: 'All'
-              ),
-
-               BottomNavigationBarItem(
-                icon: Icon(Icons.favorite),
-              label: 'Favorites'
-              ),
-            ]
-          )
+            BottomNavigationBarItem(
+              icon: Icon(Icons.favorite),
+              label: 'Favorites',
+            ),
+          ],
         ),
-        body: Consumer<ContactProvider>(
-          builder: (context, provider, child) => ListView.builder(
-            itemCount: provider.contactList.length,
-            itemBuilder: (ctx, index) {
-              final contact = provider.contactList[index];
-              return ListTile(
+      ),
+      body: Consumer<ContactProvider>(
+        builder: (context, provider, child) => ListView.builder(
+          itemCount: provider.contactList.length,
+          itemBuilder: (ctx, index) {
+            final contact = provider.contactList[index];
+
+            return Dismissible(
+              key: UniqueKey(),
+              direction: DismissDirection.endToStart,
+              background: Container(
+                padding: const EdgeInsets.only(right: 20),
+                alignment: FractionalOffset.centerRight,
+                color: Colors.red,
+                child: const Icon(Icons.delete, size: 25, color: Colors.white),
+              ),
+              confirmDismiss: _showConfirmationDialog,
+              onDismissed: (_) async {
+                  await provider.deleteContact(contact.id);
+                  showMsg(context, 'Delete');
+              },
+              child: ListTile(
+                leading: Text('id: ${contact.id}'),
                 title: Text(contact.name),
                 trailing: IconButton(
-                  onPressed: () {
-
-                  },
-                  icon: Icon(contact.favorite  ? Icons.favorite : Icons.favorite_border)
+                  onPressed: () {},
+                  icon: Icon(
+                    contact.favorite ? Icons.favorite : Icons.favorite_border,
+                  ),
                 ),
-              );
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Future<bool?> _showConfirmationDialog(DismissDirection direction) {
+    return showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete Contact'),
+        content: const Text('Are you sure to delete this content'),
+        actions: [
+          OutlinedButton(
+            onPressed: () {
+              context.pop(false);
             },
-          )
-        )
+            child: const Text('NO'),
+          ),
+
+           OutlinedButton(
+            onPressed: () {
+              context.pop(true);
+            },
+            child: const Text('YES'),
+          ),
+
+
+        ],
+      ),
     );
   }
 }

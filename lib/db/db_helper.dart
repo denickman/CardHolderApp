@@ -1,12 +1,10 @@
-
 import 'package:cardholder/models/contact_model.dart';
 import 'package:path/path.dart' as P;
 import 'package:sqflite/sqflite.dart';
 
-
 class DbHelper {
-
-  final String _createTableContact = '''create table $tableContact(
+  final String _createTableContact =
+      '''create table $tableContact(
     $tblContactId integer primary key autoincrement,
     $tblContactName text,
     $tblContactMobile text,
@@ -21,25 +19,32 @@ class DbHelper {
   Future<Database> _open() async {
     final root = await getDatabasesPath();
     final dbPath = P.join(root, 'contact.db');
-    return openDatabase(dbPath, version: 1, onCreate: (db, version) {
+    return openDatabase(
+      dbPath,
+      version: 1,
+      onCreate: (db, version) {
         db.execute(_createTableContact);
-    });
+      },
+    );
   }
 
   Future<int> insertContact(ContactModel contactModel) async {
     final db = await _open();
-    return db.insert(tableContact, contactModel.toMap(),);
+    return db.insert(tableContact, contactModel.toMap());
   }
 
   Future<List<ContactModel>> getAllContacts() async {
-      final db = await _open();
-      final mapList = await db.query(tableContact,);
-      return List.generate(mapList.length, (index) => ContactModel.fromMap(mapList[index]));
+    final db = await _open();
+    final mapList = await db.query(tableContact);
+    return List.generate(
+      mapList.length,
+      (index) => ContactModel.fromMap(mapList[index]),
+    );
   }
-  
 
-
-
-
-
+  Future<int> deleteContact(int id) async {
+    final db = await _open();
+    // return db.delete(tableContact, where: '$tblContactId = ? and $tblContactFavorite = ?', whereArgs: [id, false]);
+    return db.delete(tableContact, where: '$tblContactId = ?', whereArgs: [id]);
+  }
 }

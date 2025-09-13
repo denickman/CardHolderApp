@@ -57,6 +57,7 @@ class ContactModel {
 
   factory ContactModel.fromMap(Map<String, dynamic> map) => 
   ContactModel(
+    id: map[tblContactId],
     name: map[tblContactName], 
     mobile: map[tblContactMobile],
     email: map[tblContactEmail],
