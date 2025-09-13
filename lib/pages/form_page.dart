@@ -1,7 +1,9 @@
 import 'package:cardholder/models/contact_model.dart';
+import 'package:cardholder/pages/home_page.dart';
 import 'package:cardholder/utils/constants.dart';
 import 'package:cardholder/utils/helpers.dart';
 import 'package:cardholder/providers/contact_provider.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import 'package:flutter/material.dart';
@@ -152,6 +154,7 @@ class _FormPageState extends State<FormPage> {
     .then((value) {
       if (value > 0) {
         showMsg(context, 'Saved');
+        context.goNamed(HomePage.routeName);
       }
     })
     .catchError((error) {
