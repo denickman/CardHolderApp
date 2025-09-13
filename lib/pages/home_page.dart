@@ -45,6 +45,7 @@ class _HomePageState extends State<HomePage> {
             setState(() {
               selectedIndex = index;
             });
+            _fetchData();
           },
           currentIndex: selectedIndex,
           items: const [
@@ -74,14 +75,16 @@ class _HomePageState extends State<HomePage> {
               ),
               confirmDismiss: _showConfirmationDialog,
               onDismissed: (_) async {
-                  await provider.deleteContact(contact.id);
-                  showMsg(context, 'Delete');
+                await provider.deleteContact(contact.id);
+                showMsg(context, 'Delete');
               },
               child: ListTile(
                 leading: Text('id: ${contact.id}'),
                 title: Text(contact.name),
                 trailing: IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    provider.updateFavorite(contact);
+                  },
                   icon: Icon(
                     contact.favorite ? Icons.favorite : Icons.favorite_border,
                   ),
@@ -108,16 +111,29 @@ class _HomePageState extends State<HomePage> {
             child: const Text('NO'),
           ),
 
-           OutlinedButton(
+          OutlinedButton(
             onPressed: () {
               context.pop(true);
             },
             child: const Text('YES'),
           ),
-
-
         ],
       ),
     );
+  }
+
+  void _fetchData() {
+    switch (selectedIndex) {
+      case 0:
+        Provider.of<ContactProvider>(context, listen: false).getAllContacts();
+        break;
+
+      case 1:
+        Provider.of<ContactProvider>(
+          context,
+          listen: false,
+        ).getAllFavoriteContacts();
+        break;
+    }
   }
 }

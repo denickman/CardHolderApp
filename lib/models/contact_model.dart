@@ -66,6 +66,6 @@ class ContactModel {
     designation: map[tblContactDesignation],
     website: map[tblContactWebsite],
     image: map[tblContactImage],
-    favorite: map[tblContactFavorite] == 1 ? true : false,
+    favorite: map[tblContactFavorite] == 1 ? true : false, // '1'
     );
 }
